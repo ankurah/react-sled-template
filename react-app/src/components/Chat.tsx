@@ -65,7 +65,7 @@ export const Chat: React.FC<ChatProps> = signalObserver(({ room, currentUser }) 
                     className="debugToggle"
                     onClick={toggleDebug}
                     title={showDebug ? "Hide debug info" : "Show debug info"}
-                    style={% raw %}{{ opacity: 0.35 }}{% endraw %}
+                    style={% raw %}{{opacity: 0.35}}{% endraw %}
                 >
                     {showDebug ? "▼" : "▲"}
                 </button>

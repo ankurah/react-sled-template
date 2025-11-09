@@ -16,7 +16,7 @@ export const ChatDebugHeader: React.FC<ChatDebugHeaderProps> = signalObserver(({
 
     const getStatus = (direction: 'backward' | 'forward') => {
         const isLoading = loading === direction;
-        return isLoading ? <span style={% raw %}{{ display: 'inline-block', animation: 'spin 1s linear infinite' }}{% endraw %}>◐</span> : '';
+        return isLoading ? <span style={% raw %}{{display: 'inline-block', animation: 'spin 1s linear infinite'}}{% endraw %}>◐</span> : '';
     };
 
     const formatGap = (gap: number, trigger: number) => {

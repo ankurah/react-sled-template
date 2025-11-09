@@ -30,7 +30,7 @@ export const DebugOverlay: React.FC = () => {
     }, []);
 
     return (
-        <div style={% raw %}{{
+        <div style={{
             position: 'fixed',
             top: 400,
             left: 0,
@@ -43,10 +43,10 @@ export const DebugOverlay: React.FC = () => {
             maxWidth: '200px',
             pointerEvents: 'none',
             opacity: 0.3,
-        }}{% endraw %}>
-            <div style={% raw %}{{ fontWeight: 'bold', marginBottom: '5px' }}{% endraw %}>WIDTH DEBUG:</div>
+        }}>
+            <div style={% raw %}{{fontWeight: 'bold', marginBottom: '5px'}}{% endraw %}>WIDTH DEBUG:</div>
             {Object.entries(widths).map(([key, value]) => (
-                <div key={key} style={% raw %}{{ color: value > widths.viewport ? 'red' : 'lime' }}{% endraw %}>
+                <div key={key} style={% raw %}{{color: value > widths.viewport ? 'red' : 'lime'}}{% endraw %}>
                     {key}: {Math.round(value)}px
                 </div>
             ))}

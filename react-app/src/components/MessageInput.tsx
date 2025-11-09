@@ -148,7 +148,7 @@ export const MessageInput: React.FC<MessageInputProps> = signalObserver(({ room,
                         editingMessageMut.set(null);
                         setMessageInput("");
                     }}
-                    style={% raw %}{{ marginLeft: '8px' }}{% endraw %}
+                    style={% raw %}{{marginLeft: '8px'}}{% endraw %}
                 >
                     Cancel
                 </button>
