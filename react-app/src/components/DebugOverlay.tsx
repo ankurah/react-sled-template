@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 export const DebugOverlay: React.FC = () => {
     return null;
@@ -29,27 +29,32 @@ export const DebugOverlay: React.FC = () => {
         };
     }, []);
 
+    const style = useMemo(() => ({
+
+        position: 'fixed',
+        top: 400,
+        left: 0,
+        background: 'rgba(0,0,0,0.9)',
+        color: 'lime',
+        padding: '10px',
+        fontSize: '10px',
+        fontFamily: 'monospace',
+        zIndex: 9999,
+        maxWidth: '200px',
+        pointerEvents: 'none',
+        opacity: 0.3,
+    }), []);
+
     return (
-        <div /* { % raw %} */ style={{
-            position: 'fixed',
-            top: 400,
-            left: 0,
-            background: 'rgba(0,0,0,0.9)',
-            color: 'lime',
-            padding: '10px',
-            fontSize: '10px',
-            fontFamily: 'monospace',
-            zIndex: 9999,
-            maxWidth: '200px',
-            pointerEvents: 'none',
-            opacity: 0.3,
-        }} /* { % endraw %} */>
+        <div style={style as React.CSSProperties} >
             <div style={% raw %}{{fontWeight: 'bold', marginBottom: '5px'}}{% endraw %}>WIDTH DEBUG:</div>
-            {Object.entries(widths).map(([key, value]) => (
-                <div key={key} style={% raw %}{{color: value > widths.viewport ? 'red' : 'lime'}}{% endraw %}>
-                    {key}: {Math.round(value)}px
-                </div>
-            ))}
-        </div>
+            {
+                Object.entries(widths).map(([key, value]) => (
+                    <div key={key} style={% raw %}{{color: value > widths.viewport ? 'red' : 'lime'}}{% endraw %}>
+                        {key}: {Math.round(value)}px
+                    </div>
+                ))
+            }
+        </div >
     );
 };
