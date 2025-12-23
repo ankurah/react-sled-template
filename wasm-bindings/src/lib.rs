@@ -45,7 +45,8 @@ pub async fn start() -> Result<(), JsValue> {
         .map_err(|e| JsValue::from_str(&format!("Failed to get hostname: {:?}", e)))?;
     let ws_url = format!("ws://{}:9797", hostname);
 
-    let connector = WebsocketClient::new(node.clone(), &ws_url)?;
+    let connector = WebsocketClient::new(node.clone(), &ws_url)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
     node.system.wait_system_ready().await;
     if let Err(_) = NODE.set(node) {
         error!("Failed to set node");

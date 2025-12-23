@@ -11,6 +11,11 @@ wasm-bindings/pkg/
 react-app/node_modules/
 react-app/dist/
 react-app/.vite/
+react-app/test-results/
+react-app/package-lock.json
+
+# Local config
+.cargo/
 
 # IDEs
 .vscode/

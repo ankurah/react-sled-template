@@ -1,4 +1,4 @@
-use ankurah::Model;
+use ankurah::{Model, Ref};
 use serde::{Deserialize, Serialize};
 
 #[derive(Model, Debug, Serialize, Deserialize)]
@@ -15,9 +15,9 @@ pub struct Room {
 #[derive(Model, Debug, Serialize, Deserialize)]
 pub struct Message {
     #[active_type(LWW)]
-    pub user: String,
+    pub user: Ref<User>,
     #[active_type(LWW)]
-    pub room: String,
+    pub room: Ref<Room>,
     pub text: String,
     pub timestamp: i64,
     #[active_type(LWW)]

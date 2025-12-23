@@ -3,30 +3,31 @@ import { ctx, Transaction, YrsStringString } from "ankurah-template-wasm-binding
 import { signalObserver } from "../utils";
 import "./EditableTextField.css";
 
-interface Props<T, K extends keyof T & string> {
-    view: T & {
-        [P in K]: string;
-    } & {
-        edit(trx: Transaction): Record<K, YrsStringString>
-    };
+// View with a string field K that edits to a Mutable with YrsStringString at K
+type EditableStringView<K extends string> =
+    Record<K, string | undefined> &
+    { edit(trx: Transaction): Record<K, YrsStringString> };
+
+interface Props<K extends string> {
+    view: EditableStringView<K>;
     field: K;
     placeholder?: string;
     className?: string;
 }
 
-export const EditableTextField = signalObserver(<T, K extends keyof T & string>({
+function EditableTextFieldBase<K extends string>({
     view,
     field,
     placeholder = "Click to edit",
     className = ""
-}: Props<T, K>) => {
+}: Props<K>) {
     const [isEditing, setIsEditing] = useState(false);
     const [localValue, setLocalValue] = useState("");
     const [cursorPos, setCursorPos] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const lastValueRef = useRef("");
 
-    const currentValue = view[field] || "";
+    const currentValue = view[field] ?? "";
 
     useEffect(() => {
         if (isEditing && inputRef.current) {
@@ -46,7 +47,8 @@ export const EditableTextField = signalObserver(<T, K extends keyof T & string>(
 
     const applyChanges = (oldValue: string, newValue: string) => {
         const trx = ctx().begin();
-        const fieldWrapper = view.edit(trx)[field];
+        const mutable = view.edit(trx);
+        const yrsString = mutable[field];
 
         // Find where strings differ
         let i = 0;
@@ -55,10 +57,10 @@ export const EditableTextField = signalObserver(<T, K extends keyof T & string>(
 
         // Delete remainder of old, insert remainder of new
         const deleteCount = oldValue.length - i;
-        if (deleteCount > 0) fieldWrapper.delete(i, deleteCount);
+        if (deleteCount > 0) yrsString.delete(i, deleteCount);
 
         const insertText = newValue.slice(i);
-        if (insertText) fieldWrapper.insert(i, insertText);
+        if (insertText) yrsString.insert(i, insertText);
 
         trx.commit();
     };
@@ -102,5 +104,8 @@ export const EditableTextField = signalObserver(<T, K extends keyof T & string>(
             {currentValue || placeholder}
         </span>
     );
-});
+}
+
+// Cast to preserve generic type parameter through signalObserver HOC
+export const EditableTextField = signalObserver(EditableTextFieldBase) as typeof EditableTextFieldBase;
 

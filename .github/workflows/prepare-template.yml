@@ -6,8 +6,92 @@ on:
             - dev
 
 jobs:
-    promote:
+    test:
+        name: Build and Test
         runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Rust
+              uses: dtolnay/rust-toolchain@stable
+
+            - name: Add wasm32 target
+              run: rustup target add wasm32-unknown-unknown
+
+            - name: Cache Rust dependencies
+              uses: Swatinem/rust-cache@v2
+
+            - name: Install wasm-pack
+              run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+            - name: Build WASM bindings
+              run: wasm-pack build wasm-bindings --target web
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+
+            - name: Install npm dependencies
+              working-directory: react-app
+              run: npm install
+
+            - name: TypeScript check
+              working-directory: react-app
+              run: npx tsc --noEmit
+
+            - name: Build React app
+              working-directory: react-app
+              run: npm run build
+
+    e2e:
+        name: E2E Tests
+        runs-on: ubuntu-latest
+        needs: test
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Rust
+              uses: dtolnay/rust-toolchain@stable
+
+            - name: Add wasm32 target
+              run: rustup target add wasm32-unknown-unknown
+
+            - name: Cache Rust dependencies
+              uses: Swatinem/rust-cache@v2
+
+            - name: Install wasm-pack
+              run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+            - name: Build WASM bindings
+              run: wasm-pack build wasm-bindings --target web
+
+            - name: Build server
+              run: cargo build -p ankurah-template-server --release
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+
+            - name: Install npm dependencies
+              working-directory: react-app
+              run: npm install
+
+            - name: Install Playwright
+              working-directory: react-app
+              run: npx playwright install chromium
+
+            - name: Run E2E tests
+              working-directory: react-app
+              run: npm run test:e2e
+              env:
+                  CI: true
+
+    promote:
+        name: Promote to main
+        runs-on: ubuntu-latest
+        needs: [test, e2e]
         permissions:
             contents: write
         steps:

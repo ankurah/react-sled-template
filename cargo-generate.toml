@@ -1,10 +1,9 @@
 [template]
 exclude = [
-    "react-app/src/bun.lockb",
-    "react-app/bun.lockb",
-    "react-app/public/sounds/notification.mp3",
+  "react-app/src/bun.lockb",
+  "react-app/bun.lockb",
+  "react-app/public/sounds/notification.mp3",
 ]
 
 [hooks]
 post = ["post-message.rhai"]
-
