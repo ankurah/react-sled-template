@@ -1,4 +1,4 @@
-import { Message, MessageView, MessageLiveQuery, RoomView, RoomLiveQuery, UserView, ctx, SubscriptionGuard, JsValueMut, JsValueRead } from "{{project-name}}-wasm-bindings";
+import { Message, MessageView, MessageLiveQuery, RoomView, RoomLiveQuery, UserView, ctx, SubscriptionGuard, JsValueMut, JsValueRead, EntityId } from "{{project-name}}-wasm-bindings";
 
 // Note: This uses one query per room since GROUP BY is not yet available in Ankurah.
 // In the future, this could be optimized to a single query with GROUP BY.
@@ -11,7 +11,7 @@ export class NotificationManager {
     private lastSoundPlayedAt: number = 0;
     private readonly soundDebounceMs = 300; // Don't play sounds more often than every 300ms
     private readonly volume = 0.1; // Volume level (0.0 to 1.0)
-    private currentUserId: string | null;
+    private currentUserId: EntityId | null;
     private activeRoomId: string | null = null; // Room currently being viewed in live mode
 
     private unreadCountsMut: JsValueMut<Record<string, number>>;
@@ -21,7 +21,7 @@ export class NotificationManager {
         roomsQuery: RoomLiveQuery,
         currentUser: UserView | null
     ) {
-        this.currentUserId = currentUser?.id.to_base64() || null;
+        this.currentUserId = currentUser?.id || null;
         // Initialize unread counts
         [this.unreadCountsMut, this.unreadCounts] = JsValueMut.newPair<Record<string, number>>({});
 
@@ -79,13 +79,7 @@ export class NotificationManager {
 
             // After initial load, any adds from other users trigger notification
             const newMessagesFromOthers = changeset.adds.filter((msg: MessageView) => {
-                const isOwnMessage = msg.user === this.currentUserId;
-                console.log('NotificationManager: checking message', {
-                    msgUser: msg.user,
-                    currentUserId: this.currentUserId,
-                    isOwnMessage,
-                    text: msg.text.substring(0, 20)
-                });
+                const isOwnMessage = this.currentUserId && msg.user.id.equals(this.currentUserId);
                 return !isOwnMessage;
             });
 

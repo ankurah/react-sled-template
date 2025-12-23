@@ -52,25 +52,17 @@ export const MessageInput: React.FC<MessageInputProps> = signalObserver(({ room,
             editingMessageMut.set(null);
             setMessageInput("");
         } else {
-            // Create new message
-            console.log("Sending message:", {
-                user: currentUser.id.to_base64(),
-                room: room.id.to_base64(),
-                text: messageInput.trim(),
-                timestamp: Date.now(),
-            });
-
+            // Create new message - pass View objects (duck typing extracts .id)
             const transaction = ctx().begin();
             const msg = await Message.create(transaction, {
-                user: currentUser.id.to_base64(),
-                room: room.id.to_base64(),
+                user: currentUser,
+                room: room,
                 text: messageInput.trim(),
                 timestamp: Date.now(),
                 deleted: false,
             });
             console.log("Message created:", msg);
             await transaction.commit();
-            console.log("Transaction committed");
             setMessageInput("");
 
             // Always jump to live mode when sending a new message
@@ -91,15 +83,15 @@ export const MessageInput: React.FC<MessageInputProps> = signalObserver(({ room,
             if (!currentUser || !manager) return;
 
             const allMessages = manager.items;
-            const userId = currentUser.id.to_base64();
+            const userId = currentUser.id;
             // Find next older message by current user
             const currentIdx = editMsg
-                ? allMessages.findIndex(msg => msg.id.to_base64() === editMsg.id.to_base64())
+                ? allMessages.findIndex(msg => msg.id.equals(editMsg.id))
                 : allMessages.length;
 
             // Search backward from current position
             for (let i = currentIdx - 1; i >= 0; i--) {
-                if (allMessages[i].user === userId) {
+                if (allMessages[i].user.id.equals(userId)) {
                     editingMessageMut.set(allMessages[i]);
                     return;
                 }
@@ -109,12 +101,12 @@ export const MessageInput: React.FC<MessageInputProps> = signalObserver(({ room,
             if (!currentUser || !manager) return;
 
             const allMessages = manager.items;
-            const userId = currentUser.id.to_base64();
-            const currentIdx = allMessages.findIndex(msg => msg.id.to_base64() === editMsg.id.to_base64());
+            const userId = currentUser.id;
+            const currentIdx = allMessages.findIndex(msg => msg.id.equals(editMsg.id));
 
             // Search forward from current position
             for (let i = currentIdx + 1; i < allMessages.length; i++) {
-                if (allMessages[i].user === userId) {
+                if (allMessages[i].user.id.equals(userId)) {
                     editingMessageMut.set(allMessages[i]);
                     return;
                 }

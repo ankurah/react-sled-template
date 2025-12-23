@@ -45,7 +45,7 @@ export const Chat: React.FC<ChatProps> = signalObserver(({ room, currentUser, no
     // Access messages directly for observer tracking
     const messageList = manager?.items || [];
     const showJumpToCurrent = manager ? !manager.shouldAutoScroll : false;
-    const currentUserId = user?.id.to_base64() || null;
+    const currentUserId = user?.id || null;
 
     // Cleanup on unmount or room change
     useEffect(() => () => manager?.destroy(), [manager]);

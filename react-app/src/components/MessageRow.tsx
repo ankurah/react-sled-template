@@ -4,6 +4,7 @@ import {
   UserView,
   UserLiveQuery,
   JsValueMut,
+  EntityId,
 } from "{{project-name}}-wasm-bindings";
 import { signalObserver } from "../utils";
 import { MessageContextMenu } from "./MessageContextMenu";
@@ -12,7 +13,7 @@ import "./MessageRow.css";
 interface MessageRowProps {
   message: MessageView;
   users: UserLiveQuery;
-  currentUserId: string | null;
+  currentUserId: EntityId | null;
   editingMessage: MessageView | null;
   editingMessageMut: JsValueMut<MessageView | null>;
 }
@@ -20,20 +21,20 @@ interface MessageRowProps {
 export const MessageRow: React.FC<MessageRowProps> = signalObserver(({ message, users, currentUserId, editingMessage, editingMessageMut }) => {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
+  // Look up the message author using the typed reference
   const author = useMemo(() => {
-    const userList = (users.resultset.items || []) as UserView[];
-    return userList.find(u => u.id.to_base64() === message.user);
-  }, [users.resultset.items, message.user]);
+    return users.resultset.by_id(message.user.id) as UserView | undefined;
+  }, [users.resultset, message.user]);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (currentUserId && message.user === currentUserId) {
+    if (currentUserId && message.user.id.equals(currentUserId)) {
       setContextMenu({ x: e.clientX, y: e.clientY });
     }
   };
 
-  const isEditing = editingMessage && message.id.to_base64() === editingMessage.id.to_base64();
-  const isOwnMessage = currentUserId && message.user === currentUserId;
+  const isEditing = editingMessage && message.id.equals(editingMessage.id);
+  const isOwnMessage = currentUserId && message.user.id.equals(currentUserId);
 
   return (
     <div
