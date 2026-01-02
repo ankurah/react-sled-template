@@ -69,7 +69,7 @@ fi
 
 echo -e "${BLUE}[1/4]${NC} Building WASM bindings (initial build)..."
 cd wasm-bindings
-if ! wasm-pack build --target web --release > /dev/null; then
+if ! wasm-pack build --target web --dev > /dev/null; then
     echo -e "${RED}✗${NC} WASM build failed. Run 'cd wasm-bindings && wasm-pack build --target web --release' to see errors.\n"
     exit 1
 fi
@@ -98,7 +98,7 @@ sleep 2
 
 # Start WASM watcher
 echo -e "${YELLOW}Starting WASM rebuild watcher...${NC}"
-(cd wasm-bindings && cargo watch -i pkg -s "wasm-pack build --target web --release" 2>&1 | sed 's/^/[WASM] /') &
+(cd wasm-bindings && cargo watch -i pkg -s "wasm-pack build --target web --dev" 2>&1 | sed 's/^/[WASM] /') &
 WASM_PID=$!
 PIDS+=($WASM_PID)
 
