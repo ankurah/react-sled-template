@@ -89,3 +89,12 @@ pub async fn ready() -> Result<(), JsValue> {
 
 // Just export the models and basic primitives
 // All business logic should be in the React app
+
+// Generate MessageScrollManager in bindings crate (keeps model platform-agnostic)
+use ankurah_template_model::{MessageView, MessageLiveQuery};
+virtual_scroll::generate_scroll_manager!(
+    Message,
+    MessageView,
+    MessageLiveQuery,
+    timestamp_field = "timestamp"
+);
