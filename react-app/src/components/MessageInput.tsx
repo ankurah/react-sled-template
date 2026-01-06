@@ -9,14 +9,18 @@ import {
     JsValueMut,
 } from "ankurah-template-wasm-bindings";
 import { signalObserver } from "../utils";
-import { ChatScrollManager } from "../ChatScrollManager";
 import "./MessageInput.css";
+
+interface ScrollManager {
+    items: MessageView[];
+    jumpToLive(): Promise<void>;
+}
 
 interface MessageInputProps {
     room: RoomView;
     currentUser: UserView | null;
     editingMessageMut: JsValueMut<MessageView | null>;
-    manager: ChatScrollManager | null;
+    manager: ScrollManager | null;
 }
 
 export const MessageInput: React.FC<MessageInputProps> = signalObserver(({ room, currentUser, editingMessageMut, manager }) => {
