@@ -21,7 +21,7 @@ export default defineConfig({
     {
       command: 'cargo run -p ankurah-template-server --release',
       cwd: '..',
-      port: 9797,
+      port: 9898,
       reuseExistingServer: !process.env.CI,
       timeout: 180000,
     },

@@ -23,7 +23,7 @@ async fn main() -> Result<()> {
     ensure_general_room(&node).await?;
 
     let mut server = WebsocketServer::new(node);
-    server.run("0.0.0.0:9797").await?;
+    server.run("0.0.0.0:9898").await?;
 
     Ok(())
 }

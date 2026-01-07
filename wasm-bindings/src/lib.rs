@@ -43,7 +43,7 @@ pub async fn start() -> Result<(), JsValue> {
     let hostname = location
         .hostname()
         .map_err(|e| JsValue::from_str(&format!("Failed to get hostname: {:?}", e)))?;
-    let ws_url = format!("ws://{}:9797", hostname);
+    let ws_url = format!("ws://{}:9898", hostname);
 
     let connector = WebsocketClient::new(node.clone(), &ws_url)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;

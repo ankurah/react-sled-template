@@ -88,7 +88,7 @@ echo -e "${GREEN}✓${NC} Dependencies installed\n"
 echo -e "${BLUE}[3/4]${NC} Starting watchers...\n"
 
 # Start the Rust server
-echo -e "${YELLOW}Starting server on port 9797...${NC}"
+echo -e "${YELLOW}Starting server on port 9898...${NC}"
 cargo run --release -p ankurah-template-server 2>&1 | sed 's/^/[SERVER] /' &
 SERVER_PID=$!
 PIDS+=($SERVER_PID)
@@ -110,7 +110,7 @@ PIDS+=($REACT_PID)
 
 echo -e "\n${GREEN}✓ All services started!${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}Server:${NC}      http://127.0.0.1:9797"
+echo -e "${GREEN}Server:${NC}      http://127.0.0.1:9898"
 echo -e "${GREEN}React App:${NC}   http://localhost:5173"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${YELLOW}Press Ctrl+C to stop all services${NC}\n"
